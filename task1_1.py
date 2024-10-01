@@ -145,8 +145,8 @@ class ProcessRomi:
         # self.df_transactions.reset_index(inplace=True, drop=True)
         total_revenue_per_day = self.df_transactions.groupby(self.df_transactions['purchase_date'].dt.date)['amount'].sum().reset_index()
         unique_users_per_day = self.df_transactions.groupby(self.df_transactions['purchase_date'].dt.date)['user_id'].nunique().reset_index()
-        daily_data = pd.merge(total_revenue_per_day, unique_users_per_day, on='date')
-        daily_data['arpu'] = daily_data['amount'] / daily_data['unique_users']
+        daily_data = pd.merge(total_revenue_per_day, unique_users_per_day, on='purchase_date')
+        daily_data['arpu'] = daily_data['amount'] / daily_data['user_id'].nunique()
         avg_arpu = daily_data['arpu'].mean()
         return daily_data, avg_arpu
 
@@ -198,6 +198,11 @@ def task_1_2():
     task.merged_df.to_excel('romi_result.xlsx', index=False)
 
 
+"""Було обрано розрахунок LTV на основі ARPU та середнього часу життя клієнта, 
+оскільки цей підхід є простим, точним та базується на історичних даних. 
+Ми мали всі необхідні дані, що дозволило зробити якісну оцінку без використання складних моделей. 
+Це забезпечило швидкий і реалістичний прогноз доходу від клієнтів."""
+
 def task_1_1():
     task = ProcessRomi()
 
@@ -239,7 +244,8 @@ def task_1_0():
 
     return conversion
 
-res1 = task_1_2()
+res1 = task_1_0()
+res2 = task_1_1()
 
-print(res1)
-# print(f"Конверсія користувачів з тріального періоду в другий платіж: {res1:.2f}%")
+print(f"First-second payment user conversion: {res1:.2f}%")
+print (f'LTV forecast based on ARPU and avarage lifetime {res2:.2f}')
