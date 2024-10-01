@@ -146,7 +146,7 @@ class ProcessRomi:
         total_revenue_per_day = self.df_transactions.groupby(self.df_transactions['purchase_date'].dt.date)['amount'].sum().reset_index()
         unique_users_per_day = self.df_transactions.groupby(self.df_transactions['purchase_date'].dt.date)['user_id'].nunique().reset_index()
         daily_data = pd.merge(total_revenue_per_day, unique_users_per_day, on='purchase_date')
-        daily_data['arpu'] = daily_data['amount'] / daily_data['user_id'].nunique()
+        daily_data['arpu'] = daily_data['amount'] / daily_data['user_id']
         avg_arpu = daily_data['arpu'].mean()
         return daily_data, avg_arpu
 
